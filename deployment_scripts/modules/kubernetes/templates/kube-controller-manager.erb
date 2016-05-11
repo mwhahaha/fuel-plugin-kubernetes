@@ -1,0 +1,5 @@
+# kube-controller-manager Upstart and SysVinit configuration file
+# Customize kube-controller-manager binary location
+# KUBE_CONTROLLER_MANAGER="/opt/bin/kube-controller-manager "
+# Use KUBE_CONTROLLER_MANAGER_OPTS to modify the start/restart options
+KUBE_CONTROLLER_MANAGER_OPTS="<%=@controller_manager_opts %>"

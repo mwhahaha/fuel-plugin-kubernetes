@@ -30,9 +30,10 @@
 class kubernetes::kubectl (
   $ensure = present
 ) {
+  include ::kubernetes::params
   file { '/usr/local/bin/kubectl':
     ensure => $ensure,
     mode   => '0755',
-    source => "puppet:///modules/${module_name}/kubectl",
+    source => "${::kubernetes::params::version_file_source}/kubectl",
   }
 }

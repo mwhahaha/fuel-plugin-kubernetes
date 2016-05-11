@@ -25,7 +25,9 @@
 # Alex Schultz <aschultz@mirantis.com>
 #
 class kubernetes::docker (
-  $bridge = 'br-mgmt'
+  $bridge = 'br-mgmt',
+  $bip    = undef,
+  $mtu    = undef,
 ) {
 
   class { '::docker':
@@ -38,9 +40,11 @@ class kubernetes::docker (
     #fixed_cidr      => '10.20.1.0/24',
     #default_gateway => '10.20.0.1',
     #dns             => ['8.8.8.8', '8.8.4.4'],
-    ip_forward      => true,
-    iptables        => false,
-    ip_masq         => false,
-    bridge          => $bridge,
+    #ip_forward      => true,
+    #iptables        => false,
+    #ip_masq         => false,
+    #bridge          => $bridge,
+    bip              => $bip,
+    mtu              => $mtu,
   }
 }

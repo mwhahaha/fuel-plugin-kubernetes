@@ -23,9 +23,9 @@ $mgmt_network = get_network_role_property('management', 'network')
 #$tun_network = get_network_role_property('neutron/mesh', 'network')
 #$tun_int = get_network_role_property('neutron/mesh', 'interface')
 # fuel network-group --create --node-group 2 --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16
-$tun_network = '10.244.0.0/16'
+$tun_network = "10.246.0.0/24"
 $tun_int = 'br-kubernetes'
-$service_network = '172.12.0.0/24'
+$service_network = '10.244.0.0/16'
 
 $api_secure_port = '6443'
 $api_insecure_port = '9999'
@@ -34,19 +34,7 @@ $api_vip = $controller_mgmt_ips[0] # TODO fix me with an actual haproxy endpoint
 $api_port = $api_insecure_port # TODO fix me when ssl
 
 
-class { '::kubernetes::docker':
-  bridge => $tun_int,
-}
-class { '::kubernetes::docker::etcd':
-  node_name               => $node['name'],
-  bind_host               => $mgmt_ip,
-  peer_host               => $mgmt_ip,
-  bootstrap_cluster       => true,
-  bootstrap_token         => 'fuel-cluster-token',
-  bootstrap_cluster_nodes => $named_etcd_servers,
-  bootstrap_cluster_state => 'new'
-}
-class { '::kubernetes::docker::hyperkube::apiserver':
+class { '::kubernetes::apiserver':
   bind_address          => $mgmt_ip,
   secure_port           => $api_secure_port,
   insecure_bind_address => $mgmt_ip,
@@ -55,24 +43,18 @@ class { '::kubernetes::docker::hyperkube::apiserver':
   etcd_servers          => join($etcd_servers, ','),
   service_cluster_ips   => $service_network,
 }
-class { '::kubernetes::docker::hyperkube::scheduler':
+class { '::kubernetes::scheduler':
   bind_address => $mgmt_ip,
   master_ip    => $api_vip,
   master_port  => $api_port,
 }
-class { '::kubernetes::docker::hyperkube::controller_manager':
-  bind_address  => $mgmt_ip,
-  master_ip     => $api_vip,
-  master_port   => $api_port,
-  cluster_cidr  => $tun_network,
+class { '::kubernetes::controller_manager':
+  bind_address => $mgmt_ip,
+  master_ip    => $api_vip,
+  master_port  => $api_port,
+  cluster_cidr => $tun_network,
 }
 
-firewall { '400 etcd':
-  dport  => [ $etcd_port, $etcd_peer_port ],
-  proto  => 'tcp',
-  action => 'accept',
-  tag    => 'kubernetes',
-}
 firewall { '401 apiserver':
   dport  => [ $api_secure_port, $api_insecure_port, ],
   proto  => 'tcp',

@@ -1,0 +1,5 @@
+# kube-proxy Upstart and SysVinit configuration file
+# Customize kube-proxy binary location
+# KUBE_PROXY="/opt/bin/kube-proxy "
+# Use KUBE_PROXY_OPTS to modify the start/restart options
+KUBE_PROXY_OPTS="<%=@proxy_opts %>"
