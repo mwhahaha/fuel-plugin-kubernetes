@@ -1,4 +1,4 @@
-notice('MODULAR: kubernetes/controller.pp')
+notice('MODULAR: kubernetes/etcd.pp')
 # fuel specific network setup items
 $network_scheme = hiera_hash('network_scheme', {})
 prepare_network_config($network_scheme)
@@ -34,41 +34,25 @@ $api_vip = $controller_mgmt_ips[0] # TODO fix me with an actual haproxy endpoint
 $api_port = $api_insecure_port # TODO fix me when ssl
 
 
-class { '::kubernetes::apiserver':
-  bind_address          => $mgmt_ip,
-  secure_port           => $api_secure_port,
-  insecure_bind_address => $mgmt_ip,
-  insecure_port         => $api_insecure_port,
-  apiserver_count       => size($controller_nodes),
-  etcd_servers          => join($etcd_servers, ','),
-  service_cluster_ips   => $service_network,
-}
-class { '::kubernetes::scheduler':
-  bind_address => $mgmt_ip,
-  master_ip    => $api_vip,
-  master_port  => $api_port,
-}
-class { '::kubernetes::controller_manager':
-  bind_address => $mgmt_ip,
-  master_ip    => $api_vip,
-  master_port  => $api_port,
-  cluster_cidr => $tun_network,
+class { '::etcd':
+  node_name               => $node['name'],
+  bind_host               => $mgmt_ip,
+  peer_host               => $mgmt_ip,
+  bootstrap_cluster       => true,
+  bootstrap_token         => 'fuel-cluster-token',
+  bootstrap_cluster_nodes => $named_etcd_servers,
+  bootstrap_cluster_state => 'new'
+} ->
+# TODO(aschultz): etcdctl
+exec { 'set-flannel-netconfig':
+  path        => [ '/bin', '/usr/bin', '/usr/local/bin' ],
+  command     => "curl http://${mgmt_ip}:${etcd_port}/v2/keys/coreos.com/network/config -XPUT -d value=\"{\\\"Network\\\": \\\"${tun_network}\\\", \\\"SubnetLen\\\": 24,\\\"Backend\\\": { \\\"Type\\\": \\\"udp\\\", \\\"Port\\\": 8285 }}\"",
+  tries => 10,
+  try_sleep => 10,
 }
 
-firewall { '401 apiserver':
-  dport  => [ $api_secure_port, $api_insecure_port, ],
-  proto  => 'tcp',
-  action => 'accept',
-  tag    => 'kubernetes',
-}
-firewall { '402 scheduler':
-  dport  => [ '10251', ],
-  proto  => 'tcp',
-  action => 'accept',
-  tag    => 'kubernetes',
-}
-firewall { '403 controller-manager':
-  dport  => [ '10252', ],
+firewall { '400 etcd':
+  dport  => [ $etcd_port, $etcd_peer_port ],
   proto  => 'tcp',
   action => 'accept',
   tag    => 'kubernetes',
