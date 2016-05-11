@@ -1,0 +1,18 @@
+# Unique network role name
+- id: "kubernetes"
+  # Role mapping to network
+  default_mapping: "management"
+  properties:
+    # Should be true if network role requires subnet being set
+    subnet: true
+    # Should be true if network role requires gateway being set
+    gateway: false
+    # List of VIPs to be allocated
+    vip:
+         # Unique VIP name
+       - name: "apiserver"
+         # Optional linux namespace for VIP
+         namespace: "haproxy"
+         node_roles:
+           - "primary-kubernetes-controller"
+           - "kubernetes-controller"
