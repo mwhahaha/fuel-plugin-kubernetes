@@ -1,6 +1,8 @@
 fuel-plugin-kubernetes
 ============
 
+For an environment with tunneling:
+```
 ENV="2"
 CONTROLLER_NODE="6"
 POD_NODES="7,8,9"
@@ -15,3 +17,4 @@ fuel settings --env $ENV --upload; \
 fuel --env $ENV node set --node $CONTROLLER_NODE --role kubernetes-controller; \
 fuel --env $ENV node set --node $POD_NODES --role kubernetes-pod; \
 fuel deploy-changes --env $ENV
+```

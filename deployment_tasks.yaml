@@ -3,7 +3,7 @@
 - id: fuel-plugin-kubernetes
   type: group
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-pod]
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
   tasks: &common_tasks
     - hiera
     - setup_repositories
@@ -34,7 +34,7 @@
 - id: fuel-plugin-kubernetes-flannel
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-pod]
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
@@ -47,7 +47,7 @@
 - id: fuel-plugin-kubernetes-docker
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-pod]
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
@@ -72,7 +72,7 @@
 - id: fuel-plugin-kubernetes-proxy
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-pod]
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
@@ -85,7 +85,7 @@
 - id: fuel-plugin-kubernetes-kubelet
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-pod]
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:

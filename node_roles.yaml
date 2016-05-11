@@ -18,11 +18,11 @@ kubernetes-controller:
 #  update_required:
 #    - priamry-kubernetes-controller
 #    - kubernetes-controller
-kubernetes-pod:
+kubernetes-node:
   # Role name
-  name: "Kubernetes Pod"
+  name: "Kubernetes Node"
   # Role description
-  description: "Kuberentes Pod Functions"
+  description: "Kuberentes Node Functions"
   # If primaty then during orchestration this role will be
   # splitted into primary-role and role
   has_primary: false
