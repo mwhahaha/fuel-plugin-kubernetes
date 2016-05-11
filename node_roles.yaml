@@ -1,0 +1,33 @@
+kubernetes-controller:
+  # Role name
+  name: "Kubernetes Controller"
+  # Role description
+  description: "Kuberentes API and Controller Functions"
+  # If primaty then during orchestration this role will be
+  # splitted into primary-role and role
+  has_primary: true
+  # Assign public IP to node if true
+  public_ip_required: false
+  # Weight that will be used to sort out the
+  # roles on the Fuel web UI
+  weight: 100
+  limits:
+    max: 5
+    recommended: 3
+#  TODO: this is probably needed
+#  update_required:
+#    - priamry-kubernetes-controller
+#    - kubernetes-controller
+kubernetes-pod:
+  # Role name
+  name: "Kubernetes Pod"
+  # Role description
+  description: "Kuberentes Pod Functions"
+  # If primaty then during orchestration this role will be
+  # splitted into primary-role and role
+  has_primary: false
+  # Assign public IP to node if true
+  public_ip_required: false
+  # Weight that will be used to sort out the
+  # roles on the Fuel web UI
+  weight: 100
