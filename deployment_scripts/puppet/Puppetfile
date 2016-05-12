@@ -32,6 +32,6 @@ mod 'keepalived',
     :ref => '1.2.4'
 
 # Pull in jfryman-nginx
-mod 'keepalived',
+mod 'nginx',
     :git => 'https://github.com/jfryman/puppet-nginx.git',
     :ref => '0.3.0'
