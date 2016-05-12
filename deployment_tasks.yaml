@@ -55,19 +55,6 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 1200
 
-- id: fuel-plugin-kubernetes-flannel
-  type: puppet
-  version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [hiera, globals, netconfig]
-  required_for: [deploy_end]
-  cross-depends:
-    - name: fuel-plugin-kubernetes-etcd
-  parameters:
-    puppet_manifest: "puppet/manifests/flannel.pp"
-    puppet_modules: "puppet/modules:/etc/puppet/modules"
-    timeout: 600
-
 - id: fuel-plugin-kubernetes-apiserver
   type: puppet
   version: 2.0.0
@@ -97,6 +84,9 @@
   version: 2.0.0
   role: [primary-kubernetes-controller]
   requires: [globals, netconfig, fuel-plugin-kubernetes-kubectl]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-nginx
+    - name: fuel-plugin-kubernetes-apiserver
   required_for: [deploy_end]
   parameters:
     puppet_manifest: "puppet/manifests/namespaces.pp"
@@ -137,6 +127,19 @@
 ######################
 # tasks on ALL nodes #
 ######################
+- id: fuel-plugin-kubernetes-flannel
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [hiera, globals, netconfig]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-etcd
+  parameters:
+    puppet_manifest: "puppet/manifests/flannel.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
 - id: fuel-plugin-kubernetes-docker
   type: puppet
   version: 2.0.0
