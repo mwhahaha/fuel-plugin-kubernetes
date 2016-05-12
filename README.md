@@ -1,5 +1,19 @@
 fuel-plugin-kubernetes
-============
+======================
+
+This plugin can be used to deploy a kubernetes cluster using Fuel.
+
+
+Requirements for Building Plugin
+--------------------------------
+
+In order to build this plugin, you will need
+[librarian-puppet-simple](https://github.com/bodepd/librarian-puppet-simple)
+installed as we use that to pull down external puppet module dependencies.
+
+
+Notes on preparing the environment
+----------------------------------
 
 For an environment with tunneling:
 ```
@@ -19,4 +33,18 @@ fuel --env $ENV node set --node $POD_NODES --role kubernetes-pod; \
 ln -s k8s_network.yaml network_template_${ENV}.yaml; \
 fuel --env $ENV network-template --upload --dir ./ ; \
 fuel deploy-changes --env $ENV
+```
+
+
+Testing did it work?
+-------------------
+
+```
+kubectl run nginx --image=nginx --port=80
+kubectl expose deployment nginx --port=80
+# wait for nginx deployment to become ready
+kubectl get deployments
+# query nginx
+ip=$(kubectl get svc nginx --template={{.spec.clusterIP}})
+curl $ip
 ```
