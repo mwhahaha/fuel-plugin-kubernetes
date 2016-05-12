@@ -1,4 +1,4 @@
-notice('MODULAR: kubernetes/controller.pp')
+notice('MODULAR: kubernetes/apiserver.pp')
 # fuel specific network setup items
 $network_scheme = hiera_hash('network_scheme', {})
 prepare_network_config($network_scheme)
