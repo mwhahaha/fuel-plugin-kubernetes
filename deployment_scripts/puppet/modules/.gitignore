@@ -1,0 +1,4 @@
+# external modules should not be include
+docker
+keepalived
+nginx

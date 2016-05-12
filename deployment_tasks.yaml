@@ -19,7 +19,31 @@
     strategy:
       type: parallel
 
-# TODO: might need to split this into primary/secondary tasks
+#########################
+# controller only tasks #
+#########################
+- id: fuel-plugin-kubernetes-keepalived
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller]
+  requires: [netconfig]
+  required_for: [deploy_end]
+  parameters:
+    puppet_manifest: "puppet/manifests/keepalived.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 1200
+
+- id: fuel-plugin-kubernetes-nginx
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller]
+  requires: [fuel-plugin-kubernetes-keepalived]
+  required_for: [deploy_end]
+  parameters:
+    puppet_manifest: "puppet/manifests/nginx.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 1200
+
 - id: fuel-plugin-kubernetes-etcd
   type: puppet
   version: 2.0.0
@@ -44,54 +68,44 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
-- id: fuel-plugin-kubernetes-docker
-  type: puppet
-  version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [hiera, globals, netconfig]
-  required_for: [deploy_end]
-  cross-depends:
-    - name: fuel-plugin-kubernetes-flannel
-  parameters:
-    puppet_manifest: "puppet/manifests/docker.pp"
-    puppet_modules: "puppet/modules:/etc/puppet/modules"
-    timeout: 600
-
-# TODO: might need to split this into primary/secondary tasks
-- id: fuel-plugin-kubernetes-controller
+- id: fuel-plugin-kubernetes-apiserver
   type: puppet
   version: 2.0.0
   role: [primary-kubernetes-controller, kubernetes-controller]
   requires: [netconfig]
   required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-etcd
   parameters:
-    puppet_manifest: "puppet/manifests/controller.pp"
+    puppet_manifest: "puppet/manifests/apiserver.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 1200
 
-- id: fuel-plugin-kubernetes-proxy
+- id: fuel-plugin-kubernetes-scheduler
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  role: [primary-kubernetes-controller, kubernetes-controller]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
-    - name: fuel-plugin-kubernetes-controller
+    - name: fuel-plugin-kubernetes-nginx
+    - name: fuel-plugin-kubernetes-apiserver
   parameters:
-    puppet_manifest: "puppet/manifests/proxy.pp"
+    puppet_manifest: "puppet/manifests/scheduler.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
-- id: fuel-plugin-kubernetes-kubelet
+- id: fuel-plugin-kubernetes-controller-manager
   type: puppet
   version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  role: [primary-kubernetes-controller, kubernetes-controller]
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
-    - name: fuel-plugin-kubernetes-flannel
+    - name: fuel-plugin-kubernetes-nginx
+    - name: fuel-plugin-kubernetes-apiserver
   parameters:
-    puppet_manifest: "puppet/manifests/kubelet.pp"
+    puppet_manifest: "puppet/manifests/controller_manager.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
@@ -106,7 +120,57 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 300
 
-# LP#1580295
+######################
+# tasks on ALL nodes #
+######################
+- id: fuel-plugin-kubernetes-docker
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [hiera, globals, netconfig]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-flannel
+  parameters:
+    puppet_manifest: "puppet/manifests/docker.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
+- id: fuel-plugin-kubernetes-proxy
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [hiera, globals, netconfig]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-nginx
+    - name: fuel-plugin-kubernetes-apiserver
+  parameters:
+    puppet_manifest: "puppet/manifests/proxy.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
+- id: fuel-plugin-kubernetes-kubelet
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [hiera, globals, netconfig]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-flannel
+    - name: fuel-plugin-kubernetes-nginx
+  parameters:
+    puppet_manifest: "puppet/manifests/kubelet.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
+
+
+
+# TODO: remove this?
+######################
+# LP#1580295         #
+######################
 - id: setup_repositories
   type: puppet
   version: 2.1.0
@@ -119,4 +183,3 @@
     puppet_manifest: /etc/puppet/modules/osnailyfacter/modular/fuel_pkgs/setup_repositories.pp
     puppet_modules: /etc/puppet/modules
     timeout: 600
-

@@ -10,9 +10,7 @@
     # List of VIPs to be allocated
     vip:
          # Unique VIP name
-       - name: "apiserver"
-         # Optional linux namespace for VIP
-         namespace: "haproxy"
+       - name: "kube-apiserver"
          node_roles:
            - "primary-kubernetes-controller"
            - "kubernetes-controller"

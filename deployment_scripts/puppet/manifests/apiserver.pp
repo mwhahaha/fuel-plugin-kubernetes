@@ -19,9 +19,7 @@ $named_etcd_servers = join(suffix(join_keys_to_values($controller_mgmt_nodes,"=h
 
 # get mgmt ip to bind for etcd
 $mgmt_ip = get_network_role_property('management', 'ipaddr')
-$mgmt_network = get_network_role_property('management', 'network')
-#$tun_network = get_network_role_property('neutron/mesh', 'network')
-#$tun_int = get_network_role_property('neutron/mesh', 'interface')
+
 # fuel network-group --create --node-group 2 --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16
 $tun_network = "10.246.0.0/16"
 $tun_int = 'br-kubernetes'
@@ -33,7 +31,6 @@ $api_insecure_port = '9999'
 $api_vip = $controller_mgmt_ips[0] # TODO fix me with an actual haproxy endpoint
 $api_port = $api_insecure_port # TODO fix me when ssl
 
-
 class { '::kubernetes::apiserver':
   bind_address          => $mgmt_ip,
   secure_port           => $api_secure_port,
@@ -43,32 +40,9 @@ class { '::kubernetes::apiserver':
   etcd_servers          => join($etcd_servers, ','),
   service_cluster_ips   => $service_network,
 }
-class { '::kubernetes::scheduler':
-  bind_address => $mgmt_ip,
-  master_ip    => $api_vip,
-  master_port  => $api_port,
-}
-class { '::kubernetes::controller_manager':
-  bind_address => $mgmt_ip,
-  master_ip    => $api_vip,
-  master_port  => $api_port,
-  cluster_cidr => $tun_network,
-}
 
 firewall { '401 apiserver':
   dport  => [ $api_secure_port, $api_insecure_port, ],
-  proto  => 'tcp',
-  action => 'accept',
-  tag    => 'kubernetes',
-}
-firewall { '402 scheduler':
-  dport  => [ '10251', ],
-  proto  => 'tcp',
-  action => 'accept',
-  tag    => 'kubernetes',
-}
-firewall { '403 controller-manager':
-  dport  => [ '10252', ],
   proto  => 'tcp',
   action => 'accept',
   tag    => 'kubernetes',
