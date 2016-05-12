@@ -114,7 +114,7 @@ class etcd (
     tag     => [ 'etcd', ],
   }
 
-  file { $data_dir:
+  file { ['/var/etcd', $data_dir]:
     ensure => directory,
     mode   => '0750',
     owner  => 'root',
