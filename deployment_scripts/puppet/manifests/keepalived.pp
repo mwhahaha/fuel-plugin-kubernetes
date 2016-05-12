@@ -29,7 +29,7 @@ class { '::keepalived':
   service_manage  => true,
 }
 
-file { '/etc/defaults/keepalived':
+file { '/etc/default/keepalived':
   content => 'DAEMON_ARGS="-D"',
   before  => Class['keepalived']
 }
