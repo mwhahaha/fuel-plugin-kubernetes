@@ -22,8 +22,9 @@ class { '::flannel':
   net_iface    => $tun_int,
 }->
 exec { 'wait-for-flannel':
-  command  => 'test -f /run/flannel/subnet.env',
-  unless   => 'test -f /run/flannel/subnet.env',
-  tries    => 10,
-  try_wait => 10,
+  path      => ['/bin', '/usr/bin'],
+  command   => 'test -f /run/flannel/subnet.env',
+  unless    => 'test -f /run/flannel/subnet.env',
+  tries     => 10,
+  try_sleep => 10,
 }

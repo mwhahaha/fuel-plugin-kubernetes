@@ -23,7 +23,7 @@ $mgmt_network = get_network_role_property('management', 'network')
 #$tun_network = get_network_role_property('neutron/mesh', 'network')
 #$tun_int = get_network_role_property('neutron/mesh', 'interface')
 # fuel network-group --create --node-group 2 --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16
-$tun_network = "10.246.0.0/24"
+$tun_network = "10.246.0.0/16"
 $tun_int = 'br-kubernetes'
 $service_network = '10.244.0.0/16'
 
