@@ -1,3 +1,4 @@
 .tox
 .build
 *.pyc
+deployment_scripts/puppet/modules/docker
