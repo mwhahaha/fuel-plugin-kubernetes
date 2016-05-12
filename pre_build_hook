@@ -3,8 +3,12 @@
 # Add here any the actions which are required before plugin build
 # like packages building, packages downloading from mirrors and so on.
 # The script should return 0 if there were no errors.
+set -x
+PLUGIN_DIR=$(cd `dirname $0` && pwd -P)
 
-pushd deployment_scripts/puppet
+pushd ${PLUGIN_DIR}/deployment_scripts/puppet
 librarian-puppet install --path=./modules
-rm -rf modules/docker/.git
+for DIR in `find ${PLUGIN_DIR}/deployment_scripts/puppet -iname '.git'`; do
+  rm -rf "${DIR}"
+done
 popd
