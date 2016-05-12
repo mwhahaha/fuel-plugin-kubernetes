@@ -81,6 +81,28 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 1200
 
+- id: fuel-plugin-kubernetes-kubectl
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller]
+  requires: [globals, netconfig, fuel-plugin-kubernetes-controller]
+  required_for: [deploy_end]
+  parameters:
+    puppet_manifest: "puppet/manifests/kubectl.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 300
+
+- id: fuel-plugin-kubernetes-namespaces
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller]
+  requires: [globals, netconfig, fuel-plugin-kubernetes-kubectl]
+  required_for: [deploy_end]
+  parameters:
+    puppet_manifest: "puppet/manifests/namespaces.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 300
+
 - id: fuel-plugin-kubernetes-scheduler
   type: puppet
   version: 2.0.0
@@ -88,6 +110,7 @@
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
+    - name: fuel-plugin-kubernetes-namespaces
     - name: fuel-plugin-kubernetes-nginx
     - name: fuel-plugin-kubernetes-apiserver
   parameters:
@@ -102,6 +125,7 @@
   requires: [hiera, globals, netconfig]
   required_for: [deploy_end]
   cross-depends:
+    - name: fuel-plugin-kubernetes-namespaces
     - name: fuel-plugin-kubernetes-nginx
     - name: fuel-plugin-kubernetes-apiserver
   parameters:
@@ -109,16 +133,6 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
-- id: fuel-plugin-kubernetes-kubectl
-  type: puppet
-  version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller]
-  requires: [globals, netconfig, fuel-plugin-kubernetes-controller]
-  required_for: [deploy_end]
-  parameters:
-    puppet_manifest: "puppet/manifests/kubectl.pp"
-    puppet_modules: "puppet/modules:/etc/puppet/modules"
-    timeout: 300
 
 ######################
 # tasks on ALL nodes #

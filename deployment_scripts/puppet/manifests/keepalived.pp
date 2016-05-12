@@ -29,13 +29,19 @@ class { '::keepalived':
   service_manage  => true,
 }
 
+file { '/etc/defaults/keepalived':
+  content => 'DAEMON_ARGS="-D"',
+  before  => Class['keepalived']
+}
+
 keepalived::vrrp::instance { $vip_name:
   interface         => $mgmt_int,
-  state             => 'MASTER',
+  state             => 'BACKUP',
+  nopreempt         => true,
   virtual_router_id => '50',
   priority          => '100',
   auth_type         => 'PASS',
-  auth_pass         => 'asecretpassword!', # TODO: fixme
+  auth_pass         => 'asecretpassword', # TODO: fixme
   virtual_ipaddress => $api_vip,
   unicast_source_ip => $mgmt_ip,
   unicast_peers     => $controller_mgmt_ips,
