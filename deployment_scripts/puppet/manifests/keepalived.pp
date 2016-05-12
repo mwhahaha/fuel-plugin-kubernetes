@@ -24,7 +24,10 @@ $api_vip = $network_metadata['vips'][$vip_name]['ipaddr']
 
 $api_port = $api_insecure_port # TODO fix me when ssl
 
-class { '::keepalived': }
+class { '::keepalived':
+  service_restart => 'service keepalived restart',
+  service_manage  => true,
+}
 
 keepalived::vrrp::instance { $vip_name:
   interface         => $mgmt_int,
@@ -37,3 +40,6 @@ keepalived::vrrp::instance { $vip_name:
   unicast_source_ip => $mgmt_ip,
   unicast_peers     => $controller_mgmt_ips,
 }
+
+Keepalived::Vrrp::Instance[$vip_name] ~>
+  Service[$::keepalived::service_name]

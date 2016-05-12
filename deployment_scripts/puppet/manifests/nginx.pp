@@ -27,6 +27,10 @@ $api_nodes = suffix($controller_mgmt_ips, ":${api_insecure_port}")
 
 $api_port = $api_insecure_port # TODO fix me when ssl
 
+sysctl::value { 'net.ipv4.ip_nonlocal_bind':
+  value => '1'
+}
+
 class { 'nginx': }
 
 nginx::resource::upstream { $vip_name:
@@ -45,3 +49,7 @@ firewall { '401 apiserver vip':
   action => 'accept',
   tag    => 'kubernetes',
 }
+
+
+Sysctl::Value['net.ipv4.ip_nonlocal_bind'] ->
+  Service['nginx']
