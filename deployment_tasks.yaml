@@ -27,8 +27,8 @@
   requires: [netconfig]
   required_for: [deploy_end]
   parameters:
-    puppet_manifest: "manifests/etcd.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/etcd.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 1200
 
 - id: fuel-plugin-kubernetes-flannel
@@ -40,8 +40,8 @@
   cross-depends:
     - name: fuel-plugin-kubernetes-etcd
   parameters:
-    puppet_manifest: "manifests/flannel.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/flannel.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
 - id: fuel-plugin-kubernetes-docker
@@ -53,8 +53,8 @@
   cross-depends:
     - name: fuel-plugin-kubernetes-flannel
   parameters:
-    puppet_manifest: "manifests/docker.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/docker.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
 # TODO: might need to split this into primary/secondary tasks
@@ -65,8 +65,8 @@
   requires: [netconfig]
   required_for: [deploy_end]
   parameters:
-    puppet_manifest: "manifests/controller.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/controller.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 1200
 
 - id: fuel-plugin-kubernetes-proxy
@@ -78,8 +78,8 @@
   cross-depends:
     - name: fuel-plugin-kubernetes-controller
   parameters:
-    puppet_manifest: "manifests/proxy.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/proxy.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
 - id: fuel-plugin-kubernetes-kubelet
@@ -91,8 +91,8 @@
   cross-depends:
     - name: fuel-plugin-kubernetes-flannel
   parameters:
-    puppet_manifest: "manifests/kubelet.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/kubelet.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
 - id: fuel-plugin-kubernetes-kubectl
@@ -102,8 +102,8 @@
   requires: [globals, netconfig, fuel-plugin-kubernetes-controller]
   required_for: [deploy_end]
   parameters:
-    puppet_manifest: "manifests/kubectl.pp"
-    puppet_modules: "modules:/etc/puppet/modules"
+    puppet_manifest: "puppet/manifests/kubectl.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 300
 
 # LP#1580295
