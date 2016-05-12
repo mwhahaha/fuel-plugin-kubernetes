@@ -83,7 +83,6 @@ class kubernetes::kubelet (
   # TODO(aschultz): hostname-override is here to prevent kubelet failing if
   # it cannot lookup the hostname. This should probably be removed/figured out
   $kubelet_opts = join([
-    '--containerized',
     '--configure-cbr0=false', # fuel handles bridges for ovs
     "--hostname-override=${node_name}", # FIXME
     "--address=${bind_address}",
