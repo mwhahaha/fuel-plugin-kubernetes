@@ -47,5 +47,8 @@ keepalived::vrrp::instance { $vip_name:
   unicast_peers     => $controller_mgmt_ips,
 }
 
+# (╯°□°）╯︵ ┻━┻
+tweaks::ubuntu_service_override { 'keepalived': }
+
 Keepalived::Vrrp::Instance[$vip_name] ~>
   Service[$::keepalived::service_name]
