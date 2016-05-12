@@ -24,12 +24,16 @@ $api_vip = $controller_mgmt_ips[0] # TODO fix me with an actual haproxy endpoint
 $api_port = $api_insecure_port # TODO fix me when ssl
 $api_servers = suffix(prefix($controller_mgmt_ips, 'http://'), ":${api_port}")
 
+$vip_name = 'kube-apiserver'
+$api_vip = $network_metadata['vips'][$vip_name]['ipaddr']
+$api_vip_port = '9990' # TODO fix me when ssl
+
 $dns_server = hiera('management_vrouter_vip')
 $dns_domain = 'test.domain.local' # TODO fix me
 
 class { '::kubernetes::kubelet':
   bind_address   => $mgmt_ip,
-  api_servers    => $api_servers, #TODO can this be the vip?
+  api_servers    => "http://${api_vip}:${api_vip_port}", #NOTE: should this be the api servers instead of the vip?
   cluster_dns    => $dns_server,
   cluster_domain => $dns_domain,
   node_name      => $node['name'],
