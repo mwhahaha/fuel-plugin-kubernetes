@@ -16,5 +16,7 @@ vi settings_$ENV.yaml; \
 fuel settings --env $ENV --upload; \
 fuel --env $ENV node set --node $CONTROLLER_NODE --role kubernetes-controller; \
 fuel --env $ENV node set --node $POD_NODES --role kubernetes-pod; \
+ln -s k8s_network.yaml network_template_${ENV}.yaml; \
+fuel --env $ENV network-template --upload --dir ./ ;\
 fuel deploy-changes --env $ENV
 ```
