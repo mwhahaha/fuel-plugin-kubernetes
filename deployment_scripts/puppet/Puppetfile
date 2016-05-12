@@ -25,18 +25,3 @@
 mod 'docker',
     :git => 'https://github.com/garethr/garethr-docker.git',
     :ref => 'v5.2.0'
-
-# Pull in puppetlabs-apt
-mod 'apt',
-    :git => 'https://github.com/puppetlabs/puppetlabs-apt.git',
-    :ref => '2.2.2'
-
-# Pull in puppetlabs-stdlib
-mod 'stdlib',
-    :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git',
-    :ref => '4.11.0'
-
-# Pull in camptocamp-openssl
-mod 'openssl',
-    :git => 'https://github.com/camptocamp/puppet-openssl.git',
-    :ref => '1.7.1'
