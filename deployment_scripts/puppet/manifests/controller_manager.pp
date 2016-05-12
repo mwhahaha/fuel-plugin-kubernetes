@@ -4,6 +4,14 @@ $network_scheme = hiera_hash('network_scheme', {})
 prepare_network_config($network_scheme)
 $network_metadata = hiera_hash('network_metadata', {})
 
+$controller_nodes = get_nodes_hash_by_roles($network_metadata, ['primary-kubernetes-controller', 'kubernetes-controller'])
+
+if size($controller_nodes) > 1 {
+  $leader_elect = true
+} else {
+  $leader_elect = false
+}
+
 $node = hiera('node')
 
 # get mgmt ip to bind for etcd
@@ -21,6 +29,7 @@ class { '::kubernetes::controller_manager':
   master_ip    => $api_vip,
   master_port  => $api_vip_port,
   cluster_cidr => $tun_network,
+  leader_elect => $leader_elect,
 }
 
 firewall { '403 controller-manager':

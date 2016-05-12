@@ -14,10 +14,13 @@ kubernetes-controller:
   limits:
     max: 5
     recommended: 3
-#  TODO: this is probably needed
-#  update_required:
-#    - priamry-kubernetes-controller
-#    - kubernetes-controller
+  # Controller already includes the stuff on a node
+  conflicts:
+    - kubernetes-node
+  update_required:
+    - priamry-kubernetes-controller
+    - kubernetes-controller
+
 kubernetes-node:
   # Role name
   name: "Kubernetes Node"
@@ -31,3 +34,6 @@ kubernetes-node:
   # Weight that will be used to sort out the
   # roles on the Fuel web UI
   weight: 100
+  # Controller already includes the stuff on a node
+  conflicts:
+    - kubernetes-controller
