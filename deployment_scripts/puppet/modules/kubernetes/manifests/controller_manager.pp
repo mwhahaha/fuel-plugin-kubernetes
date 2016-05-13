@@ -56,12 +56,9 @@ class kubernetes::controller_manager (
     '--v=2',
   ], ' ')
 
-  file { '/usr/bin/kube-controller-manager':
-    ensure => present,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kube-controller-manager",
-    owner  => 'root',
-    group  => 'root',
+  #TODO(adidenko): better packages
+  package { 'kube-controller-manager':
+    ensure => installed,
     tag    => ['controller-manager',]
   }
 
@@ -90,6 +87,8 @@ class kubernetes::controller_manager (
   }
 
   # ensure files are created prior to running the api server
-  File<| tag == 'controller-manager' |> ~> Service['kube-controller-manager']
+  Package<| tag == 'controller-manager' |> ->
+  File<| tag == 'controller-manager' |> ~>
+  Service['kube-controller-manager']
 
 }

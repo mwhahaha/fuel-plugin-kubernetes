@@ -77,13 +77,9 @@ class etcd (
 
   $etcd_opts = join(concat($etcd_cmd_opts, $etcd_cmd_bootstrap_opts), ' ')
 
-  # TODO: packages
-  file { '/usr/bin/etcd':
-    ensure => present,
-    mode   => '0755',
-    source => "puppet:///modules/${module_name}/etcd",
-    owner  => 'root',
-    group  => 'root',
+  # TODO: better packages
+  package { 'etcd':
+    ensure => installed,
     tag    => [ 'etcd', ],
   }
 
@@ -128,5 +124,7 @@ class etcd (
     provider => 'upstart'
   }
 
-  File<| tag == 'etcd' |> ~> Service['etcd']
+  Package<| tag == 'etcd' |> ->
+  File<| tag == 'etcd' |> ~>
+  Service['etcd']
 }

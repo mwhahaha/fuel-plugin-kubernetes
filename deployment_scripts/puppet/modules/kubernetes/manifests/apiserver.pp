@@ -83,12 +83,9 @@ class kubernetes::apiserver (
     tag     => 'apiserver',
   })
 
-  file { '/usr/bin/kube-apiserver':
-    ensure => present,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kube-apiserver",
-    owner  => 'root',
-    group  => 'root',
+  #TODO(adidenko): better packages
+  package { 'kube-apiserver':
+    ensure => installed,
     tag    => ['apiserver',]
   }
 
@@ -117,7 +114,9 @@ class kubernetes::apiserver (
   }
 
   # ensure files are created prior to running the api server
-  File<| tag == 'apiserver' |> ~> Service['kube-apiserver']
+  Package<| tag == 'apiserver' |> ->
+  File<| tag == 'apiserver' |> ~>
+  Service['kube-apiserver']
 
   # TODO(aschultz): for HA we need to create a kube-system namespace
   # see https://github.com/kubernetes/kubernetes/blob/master/cluster/ubuntu/deployAddons.sh#L29
