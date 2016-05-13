@@ -7,6 +7,7 @@ adv_net_template:
         if3: enp0s5       # management
         if4: enp0s6       # private
         if5: enp0s7       # storage
+        if_k8s: enp0s4    # kubernetes
     templates_for_node_role:
         controller:
           - public
@@ -152,7 +153,7 @@ adv_net_template:
             name: br-kubernetes
           - action: add-port
             bridge: br-kubernetes
-            name: <% if4 %>
+            name: <% if_k8s %>
         endpoints:
           - br-kubernetes
         roles:

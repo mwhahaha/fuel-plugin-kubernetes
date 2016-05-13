@@ -31,9 +31,7 @@ class kubernetes::kubectl (
   $ensure = present
 ) {
   include ::kubernetes::params
-  file { '/usr/local/bin/kubectl':
+  package { 'kubectl':
     ensure => $ensure,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kubectl",
   }
 }
