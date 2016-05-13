@@ -4,6 +4,7 @@ $network_scheme = hiera_hash('network_scheme', {})
 prepare_network_config($network_scheme)
 $network_metadata = hiera_hash('network_metadata', {})
 
+$settings = hiera("fuel-plugin-kubernetes", {})
 $node = hiera('node')
 
 # get nodes for etcd
@@ -23,9 +24,10 @@ $mgmt_network = get_network_role_property('management', 'network')
 #$tun_network = get_network_role_property('neutron/mesh', 'network')
 #$tun_int = get_network_role_property('neutron/mesh', 'interface')
 # fuel network-group --create --node-group 2 --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16
-$tun_network = "10.246.0.0/16"
-$tun_int = 'br-kubernetes'
-$service_network = '10.244.0.0/16'
+
+$tun_int         = pick(get_network_role_property('kubernetes', 'interface'), 'br-kubernetes')
+$tun_network     = pick($settings['internal_net'], '10.246.0.0/16')
+$service_network = pick(get_network_role_property('kubernetes', 'network'), '10.244.0.0/16')
 
 $api_secure_port = '6443'
 $api_insecure_port = '9999'

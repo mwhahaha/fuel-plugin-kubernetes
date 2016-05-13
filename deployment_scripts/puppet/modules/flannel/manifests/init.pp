@@ -47,13 +47,9 @@ class flannel (
   $net_iface    = 'br-int',
 ) {
 
-  # TODO: packages
-  file { '/usr/bin/flanneld':
-    ensure => present,
-    mode   => '0755',
-    owner  => 'root',
-    group  => 'root',
-    source => "puppet:///modules/${module_name}/flanneld",
+  # TODO: better packages
+  package { 'flannel':
+    ensure => installed,
     tag    => [ 'flanneld', ],
   }
 
@@ -81,5 +77,7 @@ class flannel (
     provider => 'upstart'
   }
 
-  File<| tag == 'flanneld' |> ~> Service['flanneld']
+  Package<| tag == 'flanneld' |> ->
+  File<| tag == 'flanneld' |> ~>
+  Service['flanneld']
 }

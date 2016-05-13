@@ -52,12 +52,9 @@ class kubernetes::scheduler (
     '--v=2',
   ], ' ')
 
-  file { '/usr/bin/kube-scheduler':
-    ensure => present,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kube-scheduler",
-    owner  => 'root',
-    group  => 'root',
+  #TODO(adidenko): better packages
+  package { 'kube-scheduler':
+    ensure => installed,
     tag    => ['scheduler',]
   }
 
@@ -86,6 +83,8 @@ class kubernetes::scheduler (
   }
 
   # ensure files are created prior to running the api server
-  File<| tag == 'scheduler' |> ~> Service['kube-scheduler']
+  Package<| tag == 'scheduler' |> ->
+  File<| tag == 'scheduler' |> ~>
+  Service['kube-scheduler']
 
 }

@@ -12,17 +12,17 @@ $api_vip_port = '9990'
 class { '::kubernetes::kubectl': }->
 # TODO: make idempotent
 exec { 'set-cluster':
-  path        => [ '/bin', '/usr/local/bin', ],
+  path        => [ '/bin', '/usr/bin', '/usr/local/bin'],
   environment => ['HOME=/root'],
   command     => "kubectl config set-cluster fuel --server=http://${api_vip}:${api_vip_port} --insecure-skip-tls-verify=true",
 }->
 exec { 'set-context':
-  path        => [ '/bin', '/usr/local/bin', ],
+  path        => [ '/bin', '/usr/bin', '/usr/local/bin'],
   environment => ['HOME=/root'],
   command     => 'kubectl config set-context fuel --cluster=fuel'
 }->
 exec { 'use-context':
-  path        => [ '/bin', '/usr/local/bin', ],
+  path        => [ '/bin', '/usr/bin', '/usr/local/bin'],
   environment => ['HOME=/root'],
   command     => 'kubectl config use-context fuel'
 }
