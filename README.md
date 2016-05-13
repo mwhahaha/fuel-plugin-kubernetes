@@ -28,6 +28,13 @@ sed -i 's/min: 1/min: 0' controller.yaml
 fuel role --rel $RELEASE --role controller --update --file controller.yaml
 ```
 
+Upload network template
+```
+export ENV=2
+ln -s k8s_network.yaml network_template_${ENV}.yaml
+fuel --env $ENV network-template --upload --dir ./
+```
+
 
 Testing did it work?
 --------------------
