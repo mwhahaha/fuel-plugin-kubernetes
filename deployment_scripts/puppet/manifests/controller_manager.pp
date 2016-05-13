@@ -3,6 +3,7 @@ notice('MODULAR: kubernetes/controller_manager.pp')
 $network_scheme = hiera_hash('network_scheme', {})
 prepare_network_config($network_scheme)
 $network_metadata = hiera_hash('network_metadata', {})
+$settings = hiera("fuel-plugin-kubernetes", {})
 
 $controller_nodes = get_nodes_hash_by_roles($network_metadata, ['primary-kubernetes-controller', 'kubernetes-controller'])
 
@@ -17,7 +18,7 @@ $node = hiera('node')
 # get mgmt ip to bind for etcd
 $mgmt_ip = get_network_role_property('management', 'ipaddr')
 
-$tun_network = '10.246.0.0/16'
+$tun_network = pick($settings['internal_net'], '10.246.0.0/16')
 
 $vip_name = 'kube-apiserver'
 $api_vip = $network_metadata['vips'][$vip_name]['ipaddr']

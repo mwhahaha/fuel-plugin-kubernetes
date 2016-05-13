@@ -1,7 +1,12 @@
 attributes:
-  fuel-plugin-kubernetes_text:
-    value: 'Set default value'
-    label: 'Text field'
-    description: 'Description for text field'
-    weight: 25
+  metadata:
+    label: "Kubernetes plugin"
+  internal_net:
+    value: "10.246.0.0/16"
+    label: "Internal network CIDR"
+    description: "Network CIDR for configuration inside containers, used for interconnection betwen them"
+    weight: 20
     type: "text"
+    regex:
+      source: '^(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/([1-9]|[1-2]\d|3[0-2])$'
+      error: "Invalid CIDR"
