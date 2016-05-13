@@ -15,29 +15,22 @@ installed as we use that to pull down external puppet module dependencies.
 Notes on preparing the environment
 ----------------------------------
 
-For an environment with tunneling:
+NOTE: You *must* correctly setup the kubernetes network group using the network
+template or it will use the *management* network for the service addresses (and
+br-mgmt) which may lead to other environment issues. See the k8s_network.yaml
+for an example network template.
+
+To disable the controller requirement within a fuel environment:
 ```
-export ENV="2"
-export CONTROLLER_NODE="6"
-export POD_NODES="7,8,9"
-fuel network-group --create --node-group $ENV --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16; \
-fuel role --rel $ENV --role controller --file test.yaml; \
-vi test.yaml; \
-fuel role --rel $ENV --role controller --update --file test.yaml; \
-fuel plugins --install fuel-plugin-kubernetes-1.0-1.0.0-1.noarch.rpm; \
-fuel settings --env $ENV --download; \
-vi settings_$ENV.yaml; \
-fuel settings --env $ENV --upload; \
-fuel --env $ENV node set --node $CONTROLLER_NODE --role kubernetes-controller; \
-fuel --env $ENV node set --node $POD_NODES --role kubernetes-pod; \
-ln -s k8s_network.yaml network_template_${ENV}.yaml; \
-fuel --env $ENV network-template --upload --dir ./ ; \
-fuel deploy-changes --env $ENV
+export RELEASE=2
+fuel role --rel $RELEASE --role controller --file controller.yaml
+sed -i 's/min: 1/min: 0' controller.yaml
+fuel role --rel $RELEASE --role controller --update --file controller.yaml
 ```
 
 
 Testing did it work?
--------------------
+--------------------
 
 ```
 kubectl run nginx --image=nginx --port=80
