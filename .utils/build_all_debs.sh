@@ -20,10 +20,10 @@ kubernetes_ver='1.2.4'
 #$CWD/build_static_deb.sh etcd $etcd_ver $TMPDIR/etcd
 #$CWD/build_static_deb.sh flannel $flannel_ver $TMPDIR/flannel
 
-$CWD/build_static_deb.sh etcd $etcd_ver $CWD/../binaries/etcd/v$etcd_ver
-$CWD/build_static_deb.sh flannel $flannel_ver $CWD/../binaries/flannel/v$flannel_ver
+$CWD/build_static_deb.sh etcd $etcd_ver $CWD/../.binaries/etcd/v$etcd_ver
+$CWD/build_static_deb.sh flannel $flannel_ver $CWD/../.binaries/flannel/v$flannel_ver
 
-for file in `find $CWD/../binaries/kubernetes/v$kubernetes_ver -type f -executable`; do
+for file in `find $CWD/../.binaries/kubernetes/v$kubernetes_ver -type f -executable`; do
   fname=${file##*/}
   $CWD/build_static_deb.sh $fname $kubernetes_ver $file
 done
