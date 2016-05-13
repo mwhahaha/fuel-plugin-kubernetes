@@ -20,7 +20,12 @@ CWD=$(cd `dirname $0` && pwd -P)
 mkdir -p $BUILD_DIR
 test -d "$BUILD_DIR" && rm -rf $BUILD_DIR/*
 
-SOURCEBINPATH=$(cd $BINPATH && pwd -P)
+if [ -d $BINPATH ] ; then
+  SOURCEBINPATH=$(cd $BINPATH && pwd -P)
+else
+  SOURCEBINPATH=$(cd `dirname $BINPATH` && pwd -P)/`basename $BINPATH`
+fi
+
 DEBFOLDERNAME="$BUILD_DIR/$PKG-$DEBVERSION"
 
 # Create your scripts source dir

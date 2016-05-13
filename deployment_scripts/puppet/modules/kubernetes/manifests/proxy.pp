@@ -48,12 +48,9 @@ class kubernetes::proxy (
     '--masquerade-all=true',
   ], ' ')
 
-  file { '/usr/bin/kube-proxy':
-    ensure => present,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kube-proxy",
-    owner  => 'root',
-    group  => 'root',
+  #TODO(adidenko): better packages
+  package { 'kube-proxy':
+    ensure => installed,
     tag    => ['proxy',]
   }
 
@@ -83,6 +80,8 @@ class kubernetes::proxy (
 
 
   # ensure files are created prior to running the api server
-  File<| tag == 'proxy' |> ~> Service['kube-proxy']
+  Package<| tag == 'proxy' |> ->
+  File<| tag == 'proxy' |> ~>
+  Service['kube-proxy']
 
 }
