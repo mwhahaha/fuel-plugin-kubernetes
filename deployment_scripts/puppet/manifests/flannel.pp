@@ -15,7 +15,7 @@ $controller_mgmt_ips = ipsort(values($controller_mgmt_nodes))
 $etcd_port = '4001'
 $etcd_servers = suffix(prefix($controller_mgmt_ips, 'http://'), ":${etcd_port}")
 
-$tun_int = 'br-kubernetes'
+$tun_int = pick(get_network_role_property('kubernetes', 'interface'), 'br-kubernetes')
 
 class { '::flannel':
   etcd_servers => join($etcd_servers, ','),

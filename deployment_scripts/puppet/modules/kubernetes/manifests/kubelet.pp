@@ -94,12 +94,9 @@ class kubernetes::kubelet (
     '--v=2',
   ], ' ')
 
-  file { '/usr/bin/kubelet':
-    ensure => present,
-    mode   => '0755',
-    source => "${::kubernetes::params::version_file_source}/kubelet",
-    owner  => 'root',
-    group  => 'root',
+  #TODO(adidenko): better packages
+  package { 'kubelet':
+    ensure => installed,
     tag    => ['kubelet',]
   }
 
@@ -129,5 +126,7 @@ class kubernetes::kubelet (
 
   # makes sure kubernetes pods configs are put inplace before starting the
   # kubelet container
-  File<| tag == 'kubelet' |> ~> Service['kubelet']
+  Package<| tag == 'kubelet' |> ->
+  File<| tag == 'kubelet' |> ~>
+  Service['kubelet']
 }
