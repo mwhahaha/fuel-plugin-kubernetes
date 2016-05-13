@@ -18,14 +18,14 @@ kubernetes-controller:
   conflicts:
     - kubernetes-node
   update_required:
-    - priamry-kubernetes-controller
+    - primary-kubernetes-controller
     - kubernetes-controller
 
 kubernetes-node:
   # Role name
   name: "Kubernetes Node"
   # Role description
-  description: "Kuberentes Node Functions"
+  description: "Kubernetes Node Functions"
   # If primaty then during orchestration this role will be
   # splitted into primary-role and role
   has_primary: false
@@ -33,7 +33,7 @@ kubernetes-node:
   public_ip_required: false
   # Weight that will be used to sort out the
   # roles on the Fuel web UI
-  weight: 100
+  weight: 101
   # Controller already includes the stuff on a node
   conflicts:
     - kubernetes-controller
