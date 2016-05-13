@@ -83,15 +83,6 @@ class etcd (
     tag    => [ 'etcd', ],
   }
 
-  file { '/usr/bin/etcdctl':
-    ensure => present,
-    mode   => '0755',
-    owner  => 'root',
-    group  => 'root',
-    source => "puppet:///modules/${module_name}/etcdctl",
-    tag    => [ 'etcd', ],
-  }
-
   file { '/etc/init/etcd.conf':
     ensure => present,
     mode   => '0644',
