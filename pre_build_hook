@@ -26,7 +26,6 @@ popd
 # deb packages at plugin build time
 #
 if [ ! -f "${PLUGIN_DIR}/.utils/.skip-debs" ]; then
-  pushd ${PLUGIN_DIR}/repositories/ubuntu/
   ${PLUGIN_DIR}/.utils/build_all_debs.sh
-  popd
+  mv ${PLUGIN_DIR}/.utils/*.deb ${PLUGIN_DIR}/repositories/ubuntu/
 fi
