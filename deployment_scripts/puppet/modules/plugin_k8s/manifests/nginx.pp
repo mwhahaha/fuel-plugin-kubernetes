@@ -32,10 +32,13 @@ class plugin_k8s::nginx {
     members => $::plugin_k8s::params::api_nodes,
   }
 
+  # we set a high proxy read timeout because the api server and the clients use
+  # very long lived watcher connections
   nginx::resource::vhost { $::plugin_k8s::params::vip_name:
-    listen_ip   => $::plugin_k8s::params::api_vip,
-    listen_port => $::plugin_k8s::params::api_vip_port,
-    proxy       => "${::plugin_k8s::params::api_proto}://${::plugin_k8s::params::vip_name}",
+    listen_ip          => $::plugin_k8s::params::api_vip,
+    listen_port        => $::plugin_k8s::params::api_vip_port,
+    proxy              => "${::plugin_k8s::params::api_proto}://${::plugin_k8s::params::vip_name}",
+    proxy_read_timeout => '1800',
   }
 
   firewall { '401 apiserver vip':
