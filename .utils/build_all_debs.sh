@@ -21,8 +21,9 @@ wget -c -N  https://github.com/kubernetes/kubernetes/releases/download/v${kubern
 tar xzf kubernetes.tar.gz kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 tar xzf kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 popd
+
 $CWD/build_static_deb.sh etcd $etcd_ver $TMPDIR/etcd
-$CWD/build_static_deb.sh flannel $flannel_ver $TMPDIR/flannel
+$CWD/build_static_deb.sh flannel $flannel_ver $TMPDIR/flannel/flanneld
 for file in `find $TMPDIR/kubernetes/server -type f -executable`; do
   fname=${file##*/}
   $CWD/build_static_deb.sh $fname $kubernetes_ver $file
