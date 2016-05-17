@@ -14,11 +14,11 @@ installed as we use that to pull down external puppet module dependencies.
 Additionally, the plugin will build deb packages for etcd, flannel, kubernetes
 durring the plugin build. You will need to make sure that dh-make is installed
 on the host where you plan on building the plugin. If you already have the
-packages and do not wish to build them, simply create a .skip-debs file in the
+packages and do not wish to build them, simply create a skip-debs file in the
 .utils directory.
 
 ```
-touch .utils/.skip-debs
+touch .utils/skip-debs
 ```
 
 

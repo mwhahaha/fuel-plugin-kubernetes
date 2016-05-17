@@ -22,10 +22,10 @@ done
 popd
 
 #
-# You can use a .skip-debs file in the .utils directory to skip building the
+# You can use a skip-debs file in the .utils directory to skip building the
 # deb packages at plugin build time
 #
-if [ ! -f "${PLUGIN_DIR}/.utils/.skip-debs" ]; then
+if [ ! -f "${PLUGIN_DIR}/.utils/skip-debs" ]; then
   ${PLUGIN_DIR}/.utils/build_all_debs.sh
   mv ${PLUGIN_DIR}/.utils/*.deb ${PLUGIN_DIR}/repositories/ubuntu/
 fi
