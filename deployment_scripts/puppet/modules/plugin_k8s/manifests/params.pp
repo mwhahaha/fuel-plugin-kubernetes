@@ -39,6 +39,7 @@ class plugin_k8s::params {
   $node_name = $node['name']
   $mgmt_ip = get_network_role_property('management', 'ipaddr')
   $bind_address = $mgmt_ip
+  $primary_controller = roles_include('primary-kubernetes-controller')
 
   # controllers
   $controller_nodes = get_nodes_hash_by_roles($network_metadata, ['primary-kubernetes-controller', 'kubernetes-controller'])
@@ -58,16 +59,16 @@ class plugin_k8s::params {
 
   # api service settigns
   $api_secure_port = '6443'
-  $api_insecure_port = '9999'
+  $api_insecure_port = '8080'
   $api_server_count = size($controller_nodes)
   $api_nodes = suffix($controller_mgmt_ips, ":${api_insecure_port}")
   $api_proto = 'http'
 
   # vip settings
   $vip_name = 'kube-apiserver'
-  $vip_interface = get_network_role_property('management', 'interface')
+  $vip_interface = get_network_role_property('kubernetes', 'interface')
   $api_vip = $network_metadata['vips'][$vip_name]['ipaddr']
-  $api_vip_port = '9990' # TODO: 8080?
+  $api_vip_port = '8080' # TODO: ssl?
   $api_vip_proto = 'http'
   $api_vip_url = "${api_vip_proto}://${api_vip}:${api_vip_port}"
 

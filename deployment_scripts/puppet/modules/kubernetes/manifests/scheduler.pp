@@ -61,8 +61,8 @@ class kubernetes::scheduler (
   file { '/etc/init/kube-scheduler.conf':
     ensure => present,
     mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     source => "puppet:///modules/${module_name}/kube-scheduler.conf",
     tag    => [ 'scheduler', ],
   }
@@ -70,8 +70,8 @@ class kubernetes::scheduler (
   file { '/etc/default/kube-scheduler':
     ensure  => present,
     mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $::kubernetes::params::kubernetes_owner,
+    group   => $::kubernetes::params::kubernetes_group,
     content => template("${module_name}/kube-scheduler.erb"),
     tag     => [ 'scheduler', ],
   }

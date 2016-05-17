@@ -34,7 +34,7 @@ class plugin_k8s::flannel {
     try_sleep => 10,
   }
 
-  firewall { '400 etcd':
+  firewall { '400 flannel':
     dport  => [
       $::plugin_k8s::params::flannel_port
     ],

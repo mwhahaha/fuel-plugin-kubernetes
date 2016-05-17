@@ -57,8 +57,8 @@ class kubernetes::proxy (
   file { '/etc/init/kube-proxy.conf':
     ensure => present,
     mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     source => "puppet:///modules/${module_name}/kube-proxy.conf",
     tag    => [ 'proxy', ],
   }
@@ -66,8 +66,8 @@ class kubernetes::proxy (
   file { '/etc/default/kube-proxy':
     ensure  => present,
     mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $::kubernetes::params::kubernetes_owner,
+    group   => $::kubernetes::params::kubernetes_group,
     content => template("${module_name}/kube-proxy.erb"),
     tag     => [ 'proxy', ],
   }

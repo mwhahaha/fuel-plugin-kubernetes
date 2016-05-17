@@ -65,8 +65,8 @@ class kubernetes::controller_manager (
   file { '/etc/init/kube-controller-manager.conf':
     ensure => present,
     mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     source => "puppet:///modules/${module_name}/kube-controller-manager.conf",
     tag    => [ 'controller-manager', ],
   }
@@ -74,8 +74,8 @@ class kubernetes::controller_manager (
   file { '/etc/default/kube-controller-manager':
     ensure  => present,
     mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $::kubernetes::params::kubernetes_owner,
+    group   => $::kubernetes::params::kubernetes_group,
     content => template("${module_name}/kube-controller-manager.erb"),
     tag     => [ 'controller-manager', ],
   }

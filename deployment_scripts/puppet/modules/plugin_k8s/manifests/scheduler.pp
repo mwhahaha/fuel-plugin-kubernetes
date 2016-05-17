@@ -22,8 +22,11 @@ class plugin_k8s::scheduler {
 
   include ::plugin_k8s::params
 
+  # TODO: can we restrict the bind address? Currently kubectl get cs returns
+  # scheduler and controller-manager healthz fails because it tries to connect
+  # on localhost
   class { '::kubernetes::scheduler':
-    bind_address => $::plugin_k8s::params::bind_address,
+    #bind_address => $::plugin_k8s::params::bind_address,
     master_ip    => $::plugin_k8s::params::api_vip,
     master_port  => $::plugin_k8s::params::api_vip_port,
     leader_elect => $::plugin_k8s::params::leader_elect,

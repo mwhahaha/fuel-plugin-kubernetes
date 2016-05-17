@@ -64,7 +64,7 @@ ln -s k8s_network.yaml network_template_${ENV}.yaml; \
 fuel --env $ENV network-template --upload --dir ./; \
 fuel plugins --install fuel-plugin-kubernetes-1.0-1.0.0-1.noarch.rpm; \
 fuel settings --env $ENV --download; \
-vi settings_${ENV}.yaml; \
+perl -i -0pe 's/enabled: false(\s+label: Kubernetes)/enabled: true$1/' settings_${ENV}.yaml
 fuel settings --env $ENV --upload; \
 fuel --env $ENV node set --node 1,2,3 --role kubernetes-controller; \
 fuel --env $ENV node set --node 4,5 --role kubernetes-node; \

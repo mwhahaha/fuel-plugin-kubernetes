@@ -14,8 +14,12 @@ kubernetes-controller:
   limits:
     max: 5
     recommended: 3
-  # Controller already includes the stuff on a node
+  # Conflicts:
+  #  - controller conflicts due to port overlaps (8080)
+  #  - kubernetes-node conflicts it already contains everything that a node will
+  #    have.
   conflicts:
+    - controller
     - kubernetes-node
   update_required:
     - primary-kubernetes-controller

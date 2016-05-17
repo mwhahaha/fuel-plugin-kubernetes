@@ -123,6 +123,17 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
+- id: fuel-plugin-kubernetes-dashboard
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller]
+  requires: [fuel-plugin-kubernetes-kubelet]
+  required_for: [deploy_end]
+  parameters:
+    puppet_manifest: "puppet/manifests/dashboard.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
 
 ######################
 # tasks on ALL nodes #
@@ -179,24 +190,4 @@
   parameters:
     puppet_manifest: "puppet/manifests/kubelet.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
-    timeout: 600
-
-
-
-
-# TODO: remove this?
-######################
-# LP#1580295         #
-######################
-- id: setup_repositories
-  type: puppet
-  version: 2.1.0
-  groups: ['/.*/']
-  requires: [hiera, rsync_core_puppet]
-  required_for: [fuel_pkgs]
-  condition:
-    yaql_exp: '($.uid in added($.network_metadata.nodes.values()).uid) or changed($.repo_setup)'
-  parameters:
-    puppet_manifest: /etc/puppet/modules/osnailyfacter/modular/fuel_pkgs/setup_repositories.pp
-    puppet_modules: /etc/puppet/modules
     timeout: 600

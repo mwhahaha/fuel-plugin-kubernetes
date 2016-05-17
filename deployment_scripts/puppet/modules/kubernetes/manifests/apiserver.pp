@@ -92,8 +92,8 @@ class kubernetes::apiserver (
   file { '/etc/init/kube-apiserver.conf':
     ensure => present,
     mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     source => "puppet:///modules/${module_name}/kube-apiserver.conf",
     tag    => [ 'apiserver', ],
   }
@@ -101,8 +101,8 @@ class kubernetes::apiserver (
   file { '/etc/default/kube-apiserver':
     ensure  => present,
     mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $::kubernetes::params::kubernetes_owner,
+    group   => $::kubernetes::params::kubernetes_group,
     content => template("${module_name}/kube-apiserver.erb"),
     tag     => [ 'apiserver', ],
   }

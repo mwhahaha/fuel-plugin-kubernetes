@@ -28,16 +28,18 @@ class plugin_k8s::keepalived {
   }
 
   keepalived::vrrp::instance { $::plugin_k8s::params::vip_name:
-    interface         => $::plugin_k8s::params::vip_interface,
-    state             => 'BACKUP',
-    nopreempt         => true,
-    virtual_router_id => '50',
-    priority          => '100',
-    auth_type         => 'PASS',
-    auth_pass         => 'asecretpassword', # TODO: fixme
-    virtual_ipaddress => $::plugin_k8s::params::api_vip,
-    unicast_source_ip => $::plugin_k8s::params::mgmt_ip,
-    unicast_peers     => $::plugin_k8s::params::controller_mgmt_ips,
+    interface           => $::plugin_k8s::params::vip_interface,
+    state               => 'BACKUP',
+    nopreempt           => true,
+    virtual_router_id   => '50',
+    priority            => '100',
+    garp_master_delay   => 3,
+    garp_master_refresh => 60,
+    auth_type           => 'PASS',
+    auth_pass           => 'asecretpassword', # TODO: fixme
+    virtual_ipaddress   => $::plugin_k8s::params::api_vip,
+    unicast_source_ip   => $::plugin_k8s::params::mgmt_ip,
+    unicast_peers       => $::plugin_k8s::params::controller_mgmt_ips,
   }
 
   # (╯°□°）╯︵ ┻━┻

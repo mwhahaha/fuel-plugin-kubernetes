@@ -60,25 +60,14 @@ class kubernetes::kubelet (
   $etcd_servers   = 'http://127.0.0.1:4001',
   $config_dir     = '/srv/kubernetes-config',
   $node_name      = $::ipaddress,
-) {
-
-  include ::kubernetes::params
+) inherits ::kubernetes::params {
 
   file { $config_dir:
     ensure => directory,
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     tag    => ['kubelet'],
   }
-
-#  # master kubernets pods configuration
-#  file { "${config_dir}/master.json":
-#    ensure  => file,
-#    owner   => 'root',
-#    group   => 'root',
-#    content => template("${module_name}/master.json.erb"),
-#    tag     => ['kubernetes-config'],
-#  }
 
   # TODO(aschultz): hostname-override is here to prevent kubelet failing if
   # it cannot lookup the hostname. This should probably be removed/figured out
@@ -103,8 +92,8 @@ class kubernetes::kubelet (
   file { '/etc/init/kubelet.conf':
     ensure => present,
     mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $::kubernetes::params::kubernetes_owner,
+    group  => $::kubernetes::params::kubernetes_group,
     source => "puppet:///modules/${module_name}/kubelet.conf",
     tag    => [ 'kubelet', ],
   }
@@ -112,8 +101,8 @@ class kubernetes::kubelet (
   file { '/etc/default/kubelet':
     ensure  => present,
     mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $::kubernetes::params::kubernetes_owner,
+    group   => $::kubernetes::params::kubernetes_group,
     content => template("${module_name}/kubelet.erb"),
     tag     => [ 'kubelet', ],
   }
