@@ -6,6 +6,13 @@
 set -x
 PLUGIN_DIR=$(cd `dirname $0` && pwd -P)
 
+# do some preflight checks on some of the required utilities to build this
+# plugin.
+CMDS="librarian-puppet dh_make"
+for CMD in $CMDS; do
+  command -v $CMD >/dev/null && continue || { echo "${CMD} not installed"; exit 1; }
+done
+
 # don't package the .git folders for the plugins we download
 pushd ${PLUGIN_DIR}/deployment_scripts/puppet
 librarian-puppet install --path=./modules
