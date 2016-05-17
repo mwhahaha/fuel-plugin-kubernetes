@@ -6,9 +6,18 @@
 set -x
 PLUGIN_DIR=$(cd `dirname $0` && pwd -P)
 
+# don't package the .git folders for the plugins we download
 pushd ${PLUGIN_DIR}/deployment_scripts/puppet
 librarian-puppet install --path=./modules
 for DIR in `find ${PLUGIN_DIR}/deployment_scripts/puppet -iname '.git'`; do
   rm -rf "${DIR}"
 done
+popd
+
+#
+# comment out this section if you don't wish to build the packages at plugin
+# build time
+#
+pushd ${PLUGIN_DIR}/repositories/ubuntu/
+${PLUGIN_DIR}/.utils/build_all_debs.sh
 popd

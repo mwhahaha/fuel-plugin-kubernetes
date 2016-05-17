@@ -55,7 +55,10 @@ done
 rm debian/*.ex
 
 # Build the package.
-debuild
+# with signing:
+#debuild
+# without signing
+debuild -us -uc
 
 # Copy DEB file into current dir
 cp $BUILD_DIR/*_all.deb $CWD/
