@@ -18,7 +18,7 @@
 #    include ::plugin_k8s::dashboard
 #
 class plugin_k8s::dashboard {
-  notice('MODULAR: plugin_k8s/apiserver.pp')
+  notice('MODULAR: plugin_k8s/dashboard.pp')
 
   include ::plugin_k8s::params
 
@@ -32,6 +32,7 @@ class plugin_k8s::dashboard {
       environment => ['HOME=/root'],
       command     => 'kubectl create -f /srv/kubernetes/kubernetes-dashboard.yaml',
       unless      => 'kubectl cluster-info | grep -q kubernetes-dashboard',
+      require     => Class['::kubernetes::dashboard'],
     }
   }
 
