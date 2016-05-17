@@ -11,6 +11,16 @@ In order to build this plugin, you will need
 [librarian-puppet-simple](https://github.com/bodepd/librarian-puppet-simple)
 installed as we use that to pull down external puppet module dependencies.
 
+Additionally, the plugin will build deb packages for etcd, flannel, kubernetes
+durring the plugin build. You will need to make sure that dh-make is installed
+on the host where you plan on building the plugin. If you already have the
+packages and do not wish to build them, simply create a .skip-debs file in the
+.utils directory.
+
+```
+touch .utils/.skip-debs
+```
+
 
 Notes on preparing the environment
 ----------------------------------
@@ -64,7 +74,7 @@ ln -s k8s_network.yaml network_template_${ENV}.yaml; \
 fuel --env $ENV network-template --upload --dir ./; \
 fuel plugins --install fuel-plugin-kubernetes-1.0-1.0.0-1.noarch.rpm; \
 fuel settings --env $ENV --download; \
-perl -i -0pe 's/enabled: false(\s+label: Kubernetes)/enabled: true$1/' settings_${ENV}.yaml
+perl -i -0pe 's/enabled: false(\s+label: Kubernetes)/enabled: true$1/' settings_${ENV}.yaml; \
 fuel settings --env $ENV --upload; \
 fuel --env $ENV node set --node 1,2,3 --role kubernetes-controller; \
 fuel --env $ENV node set --node 4,5 --role kubernetes-node; \

@@ -22,9 +22,11 @@ done
 popd
 
 #
-# comment out this section if you don't wish to build the packages at plugin
-# build time
+# You can use a .skip-debs file in the .utils directory to skip building the
+# deb packages at plugin build time
 #
-pushd ${PLUGIN_DIR}/repositories/ubuntu/
-${PLUGIN_DIR}/.utils/build_all_debs.sh
-popd
+if [ ! -f "${PLUGIN_DIR}/.utils/.skip-debs" ]; then
+  pushd ${PLUGIN_DIR}/repositories/ubuntu/
+  ${PLUGIN_DIR}/.utils/build_all_debs.sh
+  popd
+fi
