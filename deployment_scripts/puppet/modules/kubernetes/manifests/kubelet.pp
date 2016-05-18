@@ -50,16 +50,19 @@
 # Alex Schultz <aschultz@mirantis.com>
 #
 class kubernetes::kubelet (
-  $master_proto   = 'http',
-  $master_ip      = '127.0.0.1',
-  $master_port    = '8080',
-  $bind_address   = '0.0.0.0',
-  $cluster_dns    = '10.0.0.10',
-  $cluster_domain = 'cluster.local',
-  $api_servers    = 'http://127.0.0.1:8080',
-  $etcd_servers   = 'http://127.0.0.1:4001',
-  $config_dir     = '/srv/kubernetes-config',
-  $node_name      = $::ipaddress,
+  $master_proto         = 'http',
+  $master_ip            = '127.0.0.1',
+  $master_port          = '8080',
+  $bind_address         = '0.0.0.0',
+  $cluster_dns          = '10.0.0.10',
+  $cluster_domain       = 'cluster.local',
+  $api_servers          = 'http://127.0.0.1:8080',
+  $etcd_servers         = 'http://127.0.0.1:4001',
+  $config_dir           = '/srv/kubernetes-config',
+  $node_name            = $::ipaddress,
+  $idle_timeout         = '1h0m0s',
+  $sync_frequency       = '1m0s',
+  $http_check_frequency = '20s',
 ) inherits ::kubernetes::params {
 
   file { $config_dir:
@@ -79,6 +82,9 @@ class kubernetes::kubelet (
     "--config=${config_dir}",
     "--cluster-dns=${cluster_dns}",
     "--cluster-domain=${cluster_domain}",
+    "--streaming-connection-idle-timeout=${idle_timeout}",
+    "--sync-frequency=${sync_frequency}",
+    "--http-check-frequency=${http_check_frequency}",
     '--allow-privileged=true',
     '--v=2',
   ], ' ')
