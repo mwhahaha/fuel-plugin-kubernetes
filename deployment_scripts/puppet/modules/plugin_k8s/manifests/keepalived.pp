@@ -31,7 +31,7 @@ class plugin_k8s::keepalived {
   # the vip interface for the vip.  If we want to use the same interface, we
   # could but we'll need to switch out management ips for the peers
   keepalived::vrrp::instance { $::plugin_k8s::params::vip_name:
-    interface           => $::plugin_k8s::params::management_interface,
+    interface           => $::plugin_k8s::params::mgmt_interface,
     state               => 'BACKUP',
     nopreempt           => true,
     virtual_router_id   => '50',
