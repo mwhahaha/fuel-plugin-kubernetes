@@ -182,7 +182,7 @@
   type: puppet
   version: 2.0.0
   role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [hiera, globals, netconfig]
+  requires: [fuel-plugin-kubernetes-docker]
   required_for: [deploy_end]
   cross-depends:
     - name: fuel-plugin-kubernetes-flannel
