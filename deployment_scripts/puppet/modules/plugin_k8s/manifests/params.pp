@@ -38,6 +38,7 @@ class plugin_k8s::params {
   $node = hiera('node')
   $node_name = $node['name']
   $mgmt_ip = get_network_role_property('management', 'ipaddr')
+  $mgmt_interface = get_network_role_property('management', 'interface')
   $bind_address = $mgmt_ip
   $primary_controller = roles_include('primary-kubernetes-controller')
 
