@@ -23,11 +23,13 @@ class plugin_k8s::kubelet {
   include ::plugin_k8s::params
 
   class { '::kubernetes::kubelet':
-    bind_address   => $::plugin_k8s::params::bind_address,
-    api_servers    => $::plugin_k8s::params::api_vip_url,
-    cluster_dns    => $::plugin_k8s::params::dns_server,
-    cluster_domain => $::plugin_k8s::params::dns_domain,
-    node_name      => $::plugin_k8s::params::node_name,
+    bind_address       => $::plugin_k8s::params::bind_address,
+    api_servers        => $::plugin_k8s::params::api_vip_url,
+    cluster_dns        => $::plugin_k8s::params::dns_server,
+    cluster_domain     => $::plugin_k8s::params::dns_domain,
+    node_name          => $::plugin_k8s::params::node_name,
+    network_plugin     => $::plugin_k8s::params::network_plugin,
+    network_plugin_dir => $::plugin_k8s::params::network_plugin_dir,
   }
 
   firewall { '404 kubelet':

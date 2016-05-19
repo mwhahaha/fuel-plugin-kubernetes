@@ -146,8 +146,25 @@
   required_for: [deploy_end]
   cross-depends:
     - name: fuel-plugin-kubernetes-etcd
+  condition:
+    yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "flannel"'
   parameters:
     puppet_manifest: "puppet/manifests/flannel.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
+- id: fuel-plugin-kubernetes-calico
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [fuel-plugin-kubernetes-docker]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-etcd
+  condition:
+    yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "calico"'
+  parameters:
+    puppet_manifest: "puppet/manifests/calico.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
@@ -182,7 +199,7 @@
   type: puppet
   version: 2.0.0
   role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [fuel-plugin-kubernetes-docker]
+  requires: [fuel-plugin-kubernetes-docker, fuel-plugin-kubernetes-calico]
   required_for: [deploy_end]
   cross-depends:
     - name: fuel-plugin-kubernetes-flannel

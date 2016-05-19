@@ -33,6 +33,15 @@ class plugin_k8s::params {
   $cluster_interface = pick(get_network_role_property('kubernetes', 'interface'), 'br-kubernetes')
   $cluster_network = pick($settings['internal_net'], '10.246.0.0/16')
   $service_network = pick(get_network_role_property('kubernetes', 'network'), '10.244.0.0/16')
+  $networking = pick($settings['networking'], 'flannel')
+  $network_plugin = $networking ? {
+    default  => undef,
+    'calico' => 'cni'
+  }
+  $network_plugin_dir = $networking ? {
+    default  => undef,
+    'calico' => '/etc/cni/net.d'
+  }
 
   # node params
   $node = hiera('node')
@@ -73,6 +82,10 @@ class plugin_k8s::params {
   $api_vip_proto = 'http'
   $api_vip_url = "${api_vip_proto}://${api_vip}:${api_vip_port}"
 
+  # calico settings
+  $bird_port = '179'
+  $bird_proto = 'tcp'
+
   # HA settings
   if $api_server_count > 1 {
     $leader_elect = true
@@ -88,5 +101,9 @@ class plugin_k8s::params {
   # kubelet settings
   $dns_server = hiera('management_vrouter_vip')
   $dns_domain = 'test.domain.local' # TODO fix me
+  $proxy_mode = $networking ? {
+    default  => undef,
+    'calico' => 'iptables'
+  }
 
 }

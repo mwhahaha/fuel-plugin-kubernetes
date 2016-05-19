@@ -18,6 +18,10 @@
 #  (Optional) Port for for the master endpoint
 #  Defaults to '8080'
 #
+# [*proxy_mode*]
+#  (Optional) Proxy mode
+#  Defaults to 'undef'
+#
 # Variables
 # ----------
 #
@@ -38,15 +42,24 @@ class kubernetes::proxy (
   $master_proto   = 'http',
   $master_ip      = '127.0.0.1',
   $master_port    = '8080',
+  $proxy_mode     = undef,
 ) {
 
   include ::kubernetes::params
 
-  $proxy_opts = join([
+  $default_opts = [
     "--master=${master_proto}://${master_ip}:${master_port}",
     '--v=2',
     '--masquerade-all=true',
-  ], ' ')
+  ]
+
+  if $proxy_mode {
+    $additional_opts = ["--proxy-mode=$proxy_mode"]
+  } else {
+    $additional_opts = []
+  }
+
+  $proxy_opts = join(concat($default_opts, $additional_opts), ' ')
 
   #TODO(adidenko): better packages
   package { 'kube-proxy':
@@ -77,7 +90,6 @@ class kubernetes::proxy (
     enable   => true,
     provider => 'upstart'
   }
-
 
   # ensure files are created prior to running the api server
   Package<| tag == 'proxy' |> ->
