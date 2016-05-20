@@ -1,4 +1,4 @@
-# Class: calico
+# Class: calico::rcfile
 # ===========================
 #
 # Full description of class calico here.
@@ -27,27 +27,15 @@
 #
 # Copyright 2016 Your name here, unless otherwise noted.
 #
-class calico (
+class calico::rcfile (
   $etcd_servers = 'http://127.0.0.1:2379',
-  $cni_conf_dir = '/etc/cni/net.d',
+  $rcfile       = '/root/calicorc',
 ) {
-
-  include ::calico::calicoctl
-
-#  class {'::calico::node':
-#    etcd_servers => $etcd_servers,
-#  }
-#
-#  class {'::calico::cni':
-#    etcd_servers => $etcd_servers,
-#    confdir      => $cni_conf_dir,
-#  }
-#
-#  class {'::calico::rcfile':
-#    etcd_servers => $etcd_servers,
-#  }
-#
-#  Class['::calico::calicoctl'] ->
-#  Class['::calico::node']
-
+  file {$rcfile:
+    ensure  => 'file',
+    content => "
+export ETCD_ENDPOINTS='$etcd_servers'
+",
+    tag     => ['calico'],
+  }
 }

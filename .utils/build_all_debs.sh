@@ -25,7 +25,8 @@ tar xzf kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 wget -c -N https://github.com/projectcalico/calico-containers/releases/download/v${calico_ver}/calicoctl
 chmod 755 calicoctl
 wget -c -N https://github.com/projectcalico/calico-cni/releases/download/v${calico_cni_ver}/calico
-chmod 755 calico
+wget -c -N https://github.com/projectcalico/calico-cni/releases/download/v${calico_cni_ver}/calico-ipam
+chmod 755 calico calico-ipam
 popd
 
 $CWD/build_static_deb.sh etcd $etcd_ver $TMPDIR/etcd
@@ -36,6 +37,7 @@ for file in `find $TMPDIR/kubernetes/server -type f -executable`; do
 done
 $CWD/build_static_deb.sh calicoctl $calico_ver $TMPDIR/calicoctl
 $CWD/build_static_deb.sh calico $calico_cni_ver $TMPDIR/calico
+$CWD/build_static_deb.sh calico-ipam $calico_cni_ver $TMPDIR/calico-ipam
 
 #$CWD/build_static_deb.sh etcd $etcd_ver $CWD/../.binaries/etcd/v$etcd_ver
 #$CWD/build_static_deb.sh flannel $flannel_ver $CWD/../.binaries/flannel/v$flannel_ver

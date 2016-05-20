@@ -134,6 +134,20 @@
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
+- id: fuel-plugin-kubernetes-calico-master
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller]
+  requires: [fuel-plugin-kubernetes-docker]
+  required_for: [deploy_end]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-etcd
+  condition:
+    yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "calico"'
+  parameters:
+    puppet_manifest: "puppet/manifests/calico_master.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
 
 ######################
 # tasks on ALL nodes #
@@ -150,21 +164,6 @@
     yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "flannel"'
   parameters:
     puppet_manifest: "puppet/manifests/flannel.pp"
-    puppet_modules: "puppet/modules:/etc/puppet/modules"
-    timeout: 600
-
-- id: fuel-plugin-kubernetes-calico
-  type: puppet
-  version: 2.0.0
-  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [fuel-plugin-kubernetes-docker]
-  required_for: [deploy_end]
-  cross-depends:
-    - name: fuel-plugin-kubernetes-etcd
-  condition:
-    yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "calico"'
-  parameters:
-    puppet_manifest: "puppet/manifests/calico.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600
 
@@ -199,12 +198,27 @@
   type: puppet
   version: 2.0.0
   role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
-  requires: [fuel-plugin-kubernetes-docker, fuel-plugin-kubernetes-calico]
+  requires: [fuel-plugin-kubernetes-docker]
   required_for: [deploy_end]
   cross-depends:
     - name: fuel-plugin-kubernetes-flannel
     - name: fuel-plugin-kubernetes-nginx
   parameters:
     puppet_manifest: "puppet/manifests/kubelet.pp"
+    puppet_modules: "puppet/modules:/etc/puppet/modules"
+    timeout: 600
+
+- id: fuel-plugin-kubernetes-calico-node
+  type: puppet
+  version: 2.0.0
+  role: [primary-kubernetes-controller, kubernetes-controller, kubernetes-node]
+  requires: [fuel-plugin-kubernetes-docker]
+  required_for: [fuel-plugin-kubernetes-kubelet]
+  cross-depends:
+    - name: fuel-plugin-kubernetes-etcd
+  condition:
+    yaql_exp: '$.get("fuel-plugin-kubernetes").get("networking") = "calico"'
+  parameters:
+    puppet_manifest: "puppet/manifests/calico_node.pp"
     puppet_modules: "puppet/modules:/etc/puppet/modules"
     timeout: 600

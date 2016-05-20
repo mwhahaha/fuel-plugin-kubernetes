@@ -33,7 +33,7 @@ class calico::cni (
   $log_level      = 'info',
 ) {
 
-  package {'calico':
+  package {['calico', 'calico-ipam']:
     ensure => installed,
     tag    => ['calico'],
   }
@@ -46,6 +46,9 @@ class calico::cni (
   } ->
   file {"/opt/cni/bin/calico":
     ensure => "/usr/bin/calico",
+  } ->
+  file {"/opt/cni/bin/calico-ipam":
+    ensure => "/usr/bin/calico-ipam",
   }
 
   exec {"create $confdir":

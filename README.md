@@ -60,6 +60,22 @@ curl $ip
 ```
 
 
+Calico
+------
+
+It's possible to use Calico as a network provider for k8s. In order to do so
+you need to choose it on the plugin Settings page.
+Calico CLI commands example:
+
+```
+. /root/calicorc
+calicoctl status
+calicoctl pool show
+calicoctl profile show --detailed
+calicoctl profile calico-k8s-network rule show
+```
+
+
 Misc notes
 ----------
 

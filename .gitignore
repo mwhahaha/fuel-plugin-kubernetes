@@ -3,3 +3,4 @@
 *.pyc
 deployment_scripts/puppet/modules/docker
 .utils/skip-debs
+Gemfile.lock
