@@ -53,6 +53,12 @@ class flannel (
     tag    => [ 'flanneld', ],
   }
 
+  $flanneld_opts = join([
+    "-etcd-endpoints=${etcd_servers}",
+    "-iface=${net_iface}",
+    '-ip-masq',
+  ], ' ')
+
   file { '/etc/init/flanneld.conf':
     ensure => present,
     mode   => '0644',

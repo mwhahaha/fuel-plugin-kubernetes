@@ -28,6 +28,14 @@ class plugin_k8s::params {
   prepare_network_config($network_scheme)
   $network_metadata = hiera_hash('network_metadata', {})
 
+
+  if empty(get_nodes_hash_by_roles($network_metadata, ['primary-controller', 'controller'])) {
+    # TODO: The management doesn't work right if you don't have any controllers
+    # so use the kubernetes network for management functions
+    $management_network = 'kubernetes'
+  } else {
+    $management_network = 'management'
+  }
   # networking params
   # fuel network-group --create --node-group 2 --name kubernetes --release 1 --vlan 1000 --cidr 10.244.0.0/16
   $cluster_interface = pick(get_network_role_property('kubernetes', 'interface'), 'br-kubernetes')
@@ -46,14 +54,14 @@ class plugin_k8s::params {
   # node params
   $node = hiera('node')
   $node_name = $node['name']
-  $mgmt_ip = get_network_role_property('management', 'ipaddr')
-  $mgmt_interface = get_network_role_property('management', 'interface')
+  $mgmt_ip = get_network_role_property($management_network, 'ipaddr')
+  $mgmt_interface = get_network_role_property($management_network, 'interface')
   $bind_address = $mgmt_ip
   $primary_controller = roles_include('primary-kubernetes-controller')
 
   # controllers
   $controller_nodes = get_nodes_hash_by_roles($network_metadata, ['primary-kubernetes-controller', 'kubernetes-controller'])
-  $controller_mgmt_nodes = get_node_to_ipaddr_map_by_network_role($controller_nodes, 'management')
+  $controller_mgmt_nodes = get_node_to_ipaddr_map_by_network_role($controller_nodes, $management_network)
   $controller_mgmt_ips = ipsort(values($controller_mgmt_nodes))
 
 
@@ -88,8 +96,10 @@ class plugin_k8s::params {
 
   # HA settings
   if $api_server_count > 1 {
+    $keepalived_state = 'BACKUP'
     $leader_elect = true
   } else {
+    $keepalived_state = 'MASTER'
     $leader_elect = false
   }
 
@@ -99,7 +109,8 @@ class plugin_k8s::params {
   $flannel_proto = 'udp'
 
   # kubelet settings
-  $dns_server = hiera('management_vrouter_vip')
+  #$dns_server = hiera('management_vrouter_vip')
+  $dns_server = hiera('master_ip') # TODO fixme
   $dns_domain = 'test.domain.local' # TODO fix me
   $proxy_mode = $networking ? {
     default  => undef,

@@ -32,7 +32,7 @@ class plugin_k8s::keepalived {
   # could but we'll need to switch out management ips for the peers
   keepalived::vrrp::instance { $::plugin_k8s::params::vip_name:
     interface           => $::plugin_k8s::params::mgmt_interface,
-    state               => 'BACKUP',
+    state               => $::plugin_k8s::params::keepalived_state,
     nopreempt           => true,
     virtual_router_id   => '50',
     priority            => '100',

@@ -4,4 +4,4 @@
 # FLANNEL="/opt/bin/flanneld"
 
 # Use FLANNEL_OPTS to modify the start/restart options
-FLANNEL_OPTS="--etcd-endpoints=<%=@etcd_servers%> -iface=<%=@net_iface%> -ip-masq"
+FLANNEL_OPTS="<%=@flanneld_opts%>"
