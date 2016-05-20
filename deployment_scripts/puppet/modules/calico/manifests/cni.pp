@@ -35,7 +35,17 @@ class calico::cni (
 
   package {'calico':
     ensure => installed,
-    tag        => ['calico'],
+    tag    => ['calico'],
+  }
+
+  # TODO: (adidenko) figure out how to specify path to CNI bin
+  #       and remove this symlink workaround. Or update package.
+  exec {"cni-workaround-dir":
+    command => "mkdir -p /opt/cni/bin",
+    unless  => "test -d /opt/cni/bin"
+  } ->
+  file {"/opt/cni/bin/calico":
+    ensure => "/usr/bin/calico",
   }
 
   exec {"create $confdir":
