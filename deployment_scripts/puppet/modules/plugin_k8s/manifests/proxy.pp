@@ -25,5 +25,6 @@ class plugin_k8s::proxy {
   class { '::kubernetes::proxy':
     master_ip   => $::plugin_k8s::params::api_vip,
     master_port => $::plugin_k8s::params::api_vip_port,
+    proxy_mode  => $::plugin_k8s::params::proxy_mode,
   }
 }

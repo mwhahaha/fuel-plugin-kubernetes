@@ -31,6 +31,12 @@
 #  and will be mounted rw in the kubelet docker container.
 #  Defaults to '/srv/kubernetes-config'
 #
+# [*network_plugin*]
+#  (Optional) Network plugin for kubelet
+#
+# [*network_plugin_dir*]
+#  (Optional) Network plugin directory for kubelet
+#
 # Variables
 # ----------
 #
@@ -63,6 +69,8 @@ class kubernetes::kubelet (
   $idle_timeout         = '1h0m0s',
   $sync_frequency       = '1m0s',
   $http_check_frequency = '20s',
+  $network_plugin       = undef,
+  $network_plugin_dir   = undef,
 ) inherits ::kubernetes::params {
 
   file { $config_dir:
@@ -74,7 +82,7 @@ class kubernetes::kubelet (
 
   # TODO(aschultz): hostname-override is here to prevent kubelet failing if
   # it cannot lookup the hostname. This should probably be removed/figured out
-  $kubelet_opts = join([
+  $default_opts = [
     '--configure-cbr0=false', # fuel handles bridges for ovs
     "--hostname-override=${node_name}", # FIXME
     "--address=${bind_address}",
@@ -87,7 +95,18 @@ class kubernetes::kubelet (
     "--http-check-frequency=${http_check_frequency}",
     '--allow-privileged=true',
     '--v=2',
-  ], ' ')
+  ]
+
+  if $network_plugin {
+    $additional_opts = [
+      "--network-plugin=${network_plugin}",
+      "--network-plugin-dir=${network_plugin_dir}"
+    ]
+  } else {
+    $additional_opts = []
+  }
+
+  $kubelet_opts = join(concat($default_opts, $additional_opts), ' ')
 
   #TODO(adidenko): better packages
   package { 'kubelet':
