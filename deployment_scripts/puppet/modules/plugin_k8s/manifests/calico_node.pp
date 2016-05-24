@@ -32,6 +32,15 @@ class plugin_k8s::calico_node {
     confdir      => $::plugin_k8s::params::network_plugin_dir,
   }
 
+  # Kubernetes needs nsenter in order to find out container's IP, nsenter is
+  # a part of util-linux starting from version 2.24, so Ubuntu 14.10 and
+  # newer are OK
+  if $::operatingsystem == 'ubuntu' and $::operatingsystemrelease == '14.04' {
+    package {'nsenter':
+      ensure => installed,
+    }
+  }
+
   firewall { '400 bird':
     dport  => [
       $::plugin_k8s::params::bird_port
