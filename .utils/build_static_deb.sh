@@ -5,7 +5,7 @@ DEBVERSION=$2
 BINPATH=$3
 
 usage(){
-  echo "$0 PKG_NAME DIR_WITH_BINARIES VERSION"
+  echo "$0 PKG_NAME VERSION DIR_WITH_BINARIES"
 }
 
 if [ -z "$PKG" ] ||  [ -z "$DEBVERSION" ] || [ -z "$BINPATH" ] ; then

@@ -22,6 +22,15 @@ class plugin_k8s::kubelet {
 
   include ::plugin_k8s::params
 
+  # Kubernetes needs nsenter in order to find out container's IP, nsenter is
+  # a part of util-linux starting from version 2.24, so Ubuntu 14.10 and
+  # newer are OK
+  if $::operatingsystem == 'ubuntu' and $::operatingsystemrelease == '14.04' {
+    package {'nsenter':
+      ensure => installed,
+    }
+  }
+
   class { '::kubernetes::kubelet':
     bind_address       => $::plugin_k8s::params::bind_address,
     api_servers        => $::plugin_k8s::params::api_vip_url,
